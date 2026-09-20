@@ -1,5 +1,15 @@
 # CLAUDE.md
 
+## Memoria persistente del proyecto
+
+La memoria del asistente vive en `.claude/memoria/` (dentro del repo, para que viaje entre computadoras). Los tres archivos base se cargan acá en cada sesión; el resto se lee bajo demanda según indica el índice.
+
+@.claude/memoria/00-indice.md
+@.claude/memoria/01-estado-actual.md
+@.claude/memoria/02-como-trabajamos.md
+
+Regla: ante cualquier detalle fino de un módulo (formato de log obligatorio, campo de config, layout de bytes, semántica de una syscall), leer el archivo `1x-*` correspondiente antes de responder. Lo que sigue en este archivo es un resumen orientativo; si contradice a `.claude/memoria/1x-*`, ganan estos (y sobre todos, el PDF).
+
 ## Proyecto: EntrenadOS
 
 TP Cuatrimestral de la Cátedra de Sistemas Operativos (UTN FRBA, 2C2026, v1.0 del 25/08/2026). Consiste en diseñar e implementar, en C, un **sistema distribuido** que simula un sistema operativo para un cluster de entrenamiento de modelos de IA. Los usuarios envían Jobs de entrenamiento que el sistema planifica, ejecuta en una CPU simulada (Core) y administra en memoria (Placa), con persistencia de checkpoints (Storage).
@@ -207,17 +217,12 @@ Todos los módulos usan la biblioteca `so-commons-library` de la cátedra, con `
 | Check 4 | 14/11 | Storage, filesystem y persistencia: todas las operaciones de Storage + Journaling (incluye kill -9 y recuperación) |
 | Entregas finales | 28/11, 12/12, 19/12 | Todos los módulos integrados, probados de forma intensiva en entorno distribuido |
 
-## Estado de avance (conceptual, repasado con el asistente)
+## Estado de avance
 
-- [x] Niveles de planificación (largo/corto plazo)
-- [x] Modelo de 5 estados y transiciones (corregido y confirmado contra el diagrama del enunciado)
-- [x] Nacimiento y muerte de un Job
-- [ ] Algoritmos de corto plazo (FIFO, RR, HRRN) — en curso
-- [ ] Memoria/paginación (MMU, page faults, reemplazo, Offload)
-- [ ] Servicios (Loader/Labeler/Logger) y syscalls de checkpoint
-- [ ] Storage: filesystem FAT32_TRAIN y journaling
+El estado canónico (temas cerrados, en curso, pendientes y próximo paso) está en `.claude/memoria/01-estado-actual.md`, que se carga automáticamente al inicio. Se actualiza al final de cada sesión que avance algo.
 
 ## Documentos de referencia
 
-- **Enunciado completo** (`TP_2C2026_-_EntrenadOS.pdf`, v1.0): fuente de verdad para specs exactas, formatos de log obligatorios, archivos de configuración de cada módulo, listado completo de instrucciones del Core, estructura del filesystem, etc. Conviene guardarlo en el repo (ej. `docs/enunciado.pdf`) y consultarlo antes de implementar cualquier detalle fino.
-- **Entrenados_notas.md**: notas de estudio conceptuales, se actualiza a medida que se cierran temas nuevos con el asistente.
+- **Enunciado completo** (`TP 2C2026 - EntrenadOS.pdf`, en la raíz del repo, v1.0): fuente de verdad. Su transcripción fiel por módulo está en `.claude/memoria/1x-*.md`; consultarla antes de implementar cualquier detalle fino. Para leer el PDF en esta máquina: `pdftotext -layout "TP 2C2026 - EntrenadOS.pdf" -` (requiere `poppler-utils`).
+- **readme.md**: notas de estudio conceptuales, se actualiza a medida que se cierran temas nuevos con el asistente.
+- **.claude/memoria/**: memoria persistente del asistente (índice, estado, forma de trabajo, decisiones de diseño y specs completas por módulo).
