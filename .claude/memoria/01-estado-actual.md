@@ -10,11 +10,11 @@ Estamos en la fase de **estudio conceptual del enunciado**, tema por tema, antes
 
 | Estado | Tema | Dónde quedó registrado |
 |---|---|---|
-| Cerrado | Visión general: los 4 módulos, los 2 problemas de diseño, temas de la materia que toca | `readme.md` |
-| Cerrado | Arquitectura y conexiones: orden de arranque, quién habla con quién | `readme.md` |
+| Cerrado | Visión general: los 4 módulos, los 2 problemas de diseño, temas de la materia que toca | `Notas de estudio.md` |
+| Cerrado | Arquitectura y conexiones: orden de arranque, quién habla con quién | `Notas de estudio.md` |
 | Cerrado | Niveles de planificación (largo y corto plazo) | `CLAUDE.md` |
-| Cerrado | Modelo de 5 estados y sus 8 transiciones (confirmadas contra el diagrama de la pág. 10 del PDF) | `readme.md` |
-| Cerrado | Nacimiento (`INIT_JOB`, Job 0) y muerte (`EXIT`) de un Job | `readme.md` |
+| Cerrado | Modelo de 5 estados y sus 8 transiciones (confirmadas contra el diagrama de la pág. 10 del PDF) | `Notas de estudio.md` |
+| Cerrado | Nacimiento (`INIT_JOB`, Job 0) y muerte (`EXIT`) de un Job | `Notas de estudio.md` |
 | **En curso** | **Algoritmos de corto plazo: FIFO, RR, HRRN** | — |
 | Pendiente | Page Fault y atención de syscalls (bloqueantes vs. no bloqueantes, page locking, desconexión de Core) | — |
 | Pendiente | Servicios del Planificador (Loader, Labeler, Logger) y estadísticas | — |
@@ -26,11 +26,10 @@ Estamos en la fase de **estudio conceptual del enunciado**, tema por tema, antes
 
 ## Próximo paso
 
-Repasar conceptualmente **FIFO, RR y HRRN** aplicados al Planificador, y cerrar el tema en `readme.md`. Puntos a resolver en ese repaso:
+Repasar conceptualmente **FIFO, RR y HRRN** aplicados al Planificador, y cerrar el tema en `Notas de estudio.md`. Las fórmulas y la teoría de fondo ya están relevadas y confirmadas en `20-teoria-planificacion.md` (estimación exponencial de ráfaga, response ratio de HRRN, por qué RR es siempre con desalojo). Falta el repaso conversacional con el usuario para cerrarlo y decidir los puntos que el enunciado deja abiertos:
 
-- Qué configura cada parámetro: `RR_QUANTUM` (ms), `ESTIMACION_INICIAL` (ms) y `HRRN_ALFA`.
-- Fórmulas de HRRN: estimación de la próxima ráfaga (aging exponencial con alfa) y cálculo de la prioridad (response ratio). El enunciado no las da; validar contra la teoría de la materia (contradecirla es motivo de desaprobación).
-- Cómo interactúan con el modelo de 5 estados: qué pasa con la estimación/espera cuando un Job vuelve de BLOCK a READY; el desalojo por quantum en RR (EXEC → READY vía interrupción al Core); el hecho de que las syscalls no bloqueantes (`INIT_JOB`, `ALLOC`, `FREE`) no liberan el Core.
+- Qué configura cada parámetro: `RR_QUANTUM` (ms), `ESTIMACION_INICIAL` (ms) y `HRRN_ALFA`. Ya resuelto conceptualmente en `20-teoria-planificacion.md`.
+- Cómo interactúan con el modelo de 5 estados: qué pasa con la estimación/espera cuando un Job vuelve de BLOCK a READY (punto abierto, ver `03-decisiones-de-diseno.md`); el desalojo por quantum en RR (EXEC → READY vía interrupción al Core); el hecho de que las syscalls no bloqueantes (`INIT_JOB`, `ALLOC`, `FREE`) no liberan el Core.
 - El log obligatorio "Estimación" (`## (<JID>) - Prioridad HRRN calculada: <PRIORIDAD> - Estimación próxima ráfaga: <ESTIMACION>`) fija qué valores hay que poder calcular.
 
 ## Calendario relevante
@@ -39,4 +38,4 @@ Hoy (20/09) el **Check 1 (12/09, conexiones y serialización) ya pasó**. El pr�
 
 ## Última sesión (2026-09-20)
 
-Se creó esta carpeta de memoria a partir del PDF, `CLAUDE.md` y `readme.md`, para tener el mismo contexto en todas las computadoras del usuario. Quedó **sin commitear** para que el usuario la revise.
+Se creó esta carpeta de memoria a partir del PDF, `CLAUDE.md` y `Notas de estudio.md` (commiteada y pusheada). En una segunda parte de la misma sesión se incorporó también la teoría de la cátedra: diapositivas de las 5 clases relevantes (`contenido_drive/`, no versionado) y OCR selectivo del libro de texto (Silberschatz, tampoco versionado — ver `02-como-trabajamos.md`), resumidos con citas en `20-teoria-planificacion.md` a `25-teoria-libro-complementos.md`. Varios puntos que antes estaban marcados como *[derivado]* en `11-planificador.md` y `13-placa.md` (fórmulas de HRRN, preferencia de CLOCK-M por páginas no modificadas) quedaron confirmados contra la teoría oficial. Después, el antiguo `readme.md` (notas de estudio) se renombró a `Notas de estudio.md`, y `readme.md` pasó a ser la portada del repo (índice humano, espejo de este archivo). Todo esto está commiteado o pendiente de commit según lo que el usuario haya revisado — chequear `git status` al retomar.

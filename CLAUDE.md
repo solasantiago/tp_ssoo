@@ -224,5 +224,6 @@ El estado canónico (temas cerrados, en curso, pendientes y próximo paso) está
 ## Documentos de referencia
 
 - **Enunciado completo** (`TP 2C2026 - EntrenadOS.pdf`, en la raíz del repo, v1.0): fuente de verdad. Su transcripción fiel por módulo está en `.claude/memoria/1x-*.md`; consultarla antes de implementar cualquier detalle fino. Para leer el PDF en esta máquina: `pdftotext -layout "TP 2C2026 - EntrenadOS.pdf" -` (requiere `poppler-utils`).
-- **readme.md**: notas de estudio conceptuales, se actualiza a medida que se cierran temas nuevos con el asistente.
+- **readme.md**: portada del repo — orientación de dónde está cada cosa y en qué orden conviene leerla.
+- **Notas de estudio.md**: notas de estudio conceptuales, se actualiza a medida que se cierran temas nuevos con el asistente.
 - **.claude/memoria/**: memoria persistente del asistente (índice, estado, forma de trabajo, decisiones de diseño y specs completas por módulo).

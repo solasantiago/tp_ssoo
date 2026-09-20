@@ -45,8 +45,8 @@ Por cada Job se almacena un contexto de ejecución que consiste, **como mínimo*
 
 - Algoritmos posibles: **FIFO, RR y HRRN**.
 - Elegible por config (`ALGORITMO_PLANIFICACION`); **no cambia** a lo largo de una prueba.
-- HRRN: tiene un valor estimado inicial por config (`ESTIMACION_INICIAL`) y un alfa (`HRRN_ALFA`) para el cálculo de la estimación de las ráfagas. *[derivado]* El log obligatorio de "Estimación" pide loguear la prioridad HRRN calculada y la estimación de la próxima ráfaga, lo que sugiere la fórmula clásica de estimación exponencial: `Est(n+1) = alfa * Real(n) + (1 - alfa) * Est(n)`, y la prioridad HRRN = `(espera + ráfaga_estimada) / ráfaga_estimada`. El enunciado no da las fórmulas: hay que validarlas contra la teoría de la materia.
-- RR: quantum en milisegundos por config (`RR_QUANTUM`). Al vencer, el Job es desalojado (log "Desalojado por fin de quantum") y vuelve a READY (transición EXEC → READY). *[derivado]* El desalojo se materializa enviando una interrupción al Core, que la detecta en Check Interrupt y devuelve JID + contexto con el motivo.
+- HRRN: tiene un valor estimado inicial por config (`ESTIMACION_INICIAL`) y un alfa (`HRRN_ALFA`) para el cálculo de la estimación de las ráfagas. **Confirmado por la teoría de la cátedra** (`20-teoria-planificacion.md`): estimación exponencial `Est(n+1) = α·R(n) + (1-α)·Est(n)`, con `ESTIMACION_INICIAL = Est(0)`; prioridad HRRN (Response Ratio) `RR = (S + W) / S = 1 + W/S`, con S = ráfaga estimada y W = tiempo de espera en READY. El enunciado no trae las fórmulas explícitamente, pero coinciden con las diapositivas de la cátedra, así que no son una invención nuestra.
+- RR: quantum en milisegundos por config (`RR_QUANTUM`). Al vencer, el Job es desalojado (log "Desalojado por fin de quantum") y vuelve a READY (transición EXEC → READY). El desalojo se materializa enviando una interrupción al Core, que la detecta en Check Interrupt y devuelve JID + contexto con el motivo (mecanismo confirmado por la teoría de RR en `20-teoria-planificacion.md`: siempre con desalojo, vía interrupción de timer).
 
 ### Page Fault
 

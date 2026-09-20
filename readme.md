@@ -1,98 +1,60 @@
-# EntrenadOS — Notas de estudio
+# EntrenadOS — TP Sistemas Operativos (UTN FRBA, 2C2026)
 
-## Visión general
+Este repositorio contiene el **contexto y las notas de estudio** para el trabajo práctico cuatrimestral de la Cátedra de Sistemas Operativos: diseñar e implementar, en C, un sistema distribuido que simula un sistema operativo para un cluster de entrenamiento de modelos de IA. **No contiene el código del TP** — eso vive en un repositorio aparte (ver más abajo).
 
-EntrenadOS es un sistema distribuido que simula el funcionamiento de un sistema operativo. El escenario es un **cluster de entrenamiento de modelos de IA**: los usuarios envían trabajos de entrenamiento (**Jobs**) que el sistema planifica, ejecuta en una CPU simulada y administra en memoria.
+## Qué hay acá
 
-### Los cuatro módulos
+| Archivo / carpeta | Qué es | ¿Viaja con `git clone`? |
+|---|---|---|
+| `TP 2C2026 - EntrenadOS.pdf` | El enunciado oficial del TP (v1.0) — fuente de verdad | Sí |
+| `CLAUDE.md` | Resumen orientativo del TP para el asistente (Claude Code) | Sí |
+| `Notas de estudio.md` | Notas de estudio conceptuales, tema por tema, con citas de las discusiones | Sí |
+| `.claude/memoria/` | Base de conocimiento estructurada: transcripción fiel del enunciado + teoría de la cátedra, con citas exactas | Sí |
+| `contenido_drive/` | Diapositivas y ejercicios originales de la cátedra | No (`.gitignore` — material con derechos de la cátedra) |
+| `Libro - Fundamentos de Sistemas Operativos.pdf` | Libro de referencia (Silberschatz) | No (`.gitignore`) |
+| `tp-2026-2c-sigma/` | Repo de código del grupo (la implementación en C que se entrega) | No, es un git aparte |
 
-| Módulo | Rol |
-|---|---|
-| **Planificador** | Administra la cola de Jobs y decide cuándo y en qué orden se ejecutan |
-| **Core** | Ejecuta las instrucciones de un Job, como si fuera una CPU |
-| **Placa** | Administra la memoria: dónde viven los datos de cada Job |
-| **Storage** | Persiste los checkpoints del modelo en un filesystem propio |
+## Por dónde empezar
 
-Todos pueden correr en máquinas distintas y comunicarse por red. Cada módulo es un proceso real del SO, escrito en C.
+- **¿Querés el panorama general del TP?** Leé `Notas de estudio.md` — está escrito en lenguaje llano, tema por tema, a medida que se van cerrando.
+- **¿Buscás una spec exacta** (formato de un log obligatorio, un campo de config, el layout de bytes del filesystem)? Andá directo a `.claude/memoria/1x-*.md` (uno por módulo: Planificador, Core, Placa, Storage) — son transcripción fiel del enunciado.
+- **¿Querés entender la teoría detrás de una decisión de diseño** (por qué CLOCK-M prefiere páginas no modificadas, de dónde sale la fórmula de HRRN, cómo funciona el journaling de un filesystem real)? Mirá `.claude/memoria/2x-teoria-*.md` — resume las diapositivas de la cátedra y extractos puntuales del libro, citados con página/diapositiva exacta.
+- **¿Vas a usar Claude Code para seguir trabajando en esto?** No hace falta que leas nada más: `CLAUDE.md` carga automáticamente el índice y el estado actual al iniciar sesión.
 
-### Los dos problemas que definen el diseño
+## Orden de lectura recomendado (para estudiar)
 
-El enunciado impone dos condiciones que generan casi toda la complejidad:
+1. **Panorama general:** `.claude/memoria/10-arquitectura-y-reglas-generales.md` + `Notas de estudio.md` — qué es el TP, los 4 módulos, evaluación, y los temas ya cerrados.
+2. **Por bloque temático, teoría primero y después la letra del TP** (para entender el concepto general antes de ver cómo el enunciado lo simplifica):
 
-1. **La memoria de la Placa es más chica que el espacio que necesitan los Jobs** → hay que implementar paginación bajo demanda y un mecanismo de swap llamado **Offload**.
-2. **Un entrenamiento puede durar días** → los Jobs tienen que poder guardar su estado en disco (**checkpoints**) y retomarlo más adelante, incluso después de una caída del sistema.
+   | Teoría (concepto) | Enunciado (implementación) |
+   |---|---|
+   | `20-teoria-planificacion.md` | `11-planificador.md` |
+   | `21-teoria-sincronizacion.md` | (transversal a Planificador/Placa/Storage multihilo) |
+   | — | `12-core.md` (no tiene teoría propia dedicada) |
+   | `22-teoria-memoria-virtual.md` | `13-placa.md` |
+   | `23-teoria-filesystems.md` + `25-teoria-libro-complementos.md` | `14-storage.md` |
 
-### Temas de la materia que toca
+   (todos dentro de `.claude/memoria/`)
+3. **Cierre:** `15-entregas-y-checks.md` (qué se evalúa en cada check) y `03-decisiones-de-diseno.md` (a medida que el grupo resuelva los puntos que el enunciado deja abiertos).
 
-- **Planificación de procesos:** largo plazo (cuántos Jobs entran al sistema) y corto plazo (FIFO, Round Robin, HRRN)
-- **Memoria virtual y paginación:** MMU, page faults, reemplazo de páginas (LRU / Clock Modificado), page locking
-- **Sincronización y concurrencia:** servidores multihilo, servicios con colas propias
-- **Filesystem:** FAT32 simplificado implementado desde cero, con journaling para recuperarse ante fallas
+`24-teoria-deadlocks.md` queda al margen de este recorrido — no lo pide el enunciado de EntrenadOS, está documentado por completitud.
 
----
+## Advertencia sobre las fuentes de `.claude/memoria/`
 
-## Arquitectura y conexiones
+Los archivos `2x-teoria-*.md` son resúmenes armados con el asistente (citados con página/diapositiva exacta), no las fuentes primarias, y tienen dos límites conocidos:
 
-### Orden de arranque
+- Se extrajo solo **texto** de las diapositivas (`.pptx`): los diagramas e imágenes originales (diagramas de estados, gráficos de fallos de página, layouts de memoria, etc.) no están reproducidos — hay que abrir el `.pptx` en `contenido_drive/` para verlos.
+- Del libro solo se hizo **OCR selectivo** de un puñado de secciones puntuales (ver `25-teoria-libro-complementos.md`), no de los capítulos completos.
 
-El orden de inicio es obligatorio por dependencias:
+Para el parcial o el coloquio, donde hay que defender el tema, conviene complementar con una lectura directa de esas fuentes en los puntos que lo requieran.
 
-1. **Placa** y **Storage** (no dependen de nadie)
-2. **Planificador** (se conecta a Placa y Storage al iniciar)
-3. **Core** (se conecta a Planificador y Placa al iniciar)
+## Jerarquía de fuentes (ante cualquier contradicción)
 
-### Quién le habla a quién
-
-- **Core → Placa:** fetch de instrucciones y traducción de páginas (MMU)
-- **Core → Planificador:** reportar page faults y syscalls
-- **Planificador → Placa:** cargar páginas, leer/escribir memoria, desbloquear páginas
-- **Planificador → Storage:** operaciones de checkpoint
-
-> El Core **nunca habla con el Storage**. Cuando encuentra una syscall de checkpoint, se la delega al Planificador, que es quien resuelve con Storage.
-
----
-
-## Módulo: Planificador
-
-El Planificador administra la cola de Jobs del sistema y decide cuándo y en qué orden se ejecutan.
-
-### Modelo de 5 estados
-
-Los Jobs no avanzan secuencialmente de un estado al siguiente: hay transiciones definidas en direcciones específicas, y no todas las combinaciones son válidas.
-
-Los cinco estados son **NEW, READY, EXEC, BLOCK y EXIT**. Las transiciones posibles:
-
-- `NEW → READY`: el Job ingresa al sistema y queda listo para ejecutar
-- `READY → EXEC`: el Planificador le asigna un Core
-- `READY → EXIT`: el Job es cancelado antes de ejecutar
-- `EXEC → READY`: el Job es desalojado (ej: se acabó el quantum)
-- `EXEC → BLOCK`: el Job necesita esperar algo externo (I/O, carga de página)
-- `EXEC → EXIT`: el Job terminó o fue cancelado
-- `BLOCK → READY`: lo que esperaba terminó
-- `BLOCK → EXIT`: el Job es cancelado mientras espera
-
-> "Son pasos que no ocurren secuencialmente en un orden definido, pero sí hay direcciones explícitas en las que deben fluir." No existe, por ejemplo, ir de BLOCK directo a EXEC.
-
-**¿Por qué BLOCK y READY son estados distintos si los dos son "espera"?**
-
-> "BLOCK depende de alguna instrucción para avanzar, y READY no."
-
-READY significa *tengo todo lo que necesito, solo espero que me asignen un Core*. BLOCK significa *no puedo avanzar aunque me den un Core, porque estoy esperando algo externo*. La distinción importa porque solo los Jobs en READY son candidatos para ejecutar — mezclarlos con los de BLOCK sería ineficiente.
-
-### Cómo nace y muere un Job
-
-**Nacimiento**
-
-Un Job nace cuando el Core ejecuta la syscall `INIT_JOB`. El Core le pasa al Planificador el nombre de un archivo de pseudocódigo, y el Planificador crea el Job en estado NEW. Esta syscall no bloquea al Job que la solicitó: el Job que pidió crear otro sigue ejecutando con normalidad.
-
-> Caso especial: el **Job 0** no nace por `INIT_JOB`. Es el Job inicial del sistema, y su archivo de pseudocódigo se le pasa al Planificador directamente como parámetro al arrancarlo.
-
-**Muerte**
-
-Un Job muere cuando el Core ejecuta la syscall `EXIT`. El Planificador lo pasa a estado EXIT, libera todas las estructuras asociadas en todo el sistema (memoria en la Placa, estructuras administrativas) y, si el grado de multiprogramación lo permite, deja entrar a un nuevo Job de NEW a READY.
-
-> En resumen: los Jobs nacen y mueren por instrucciones que ejecuta el Core, pero quien efectivamente los crea y destruye en el sistema es el Planificador.
+1. El **PDF del enunciado** manda sobre todo lo demás: es la fuente de verdad de qué hay que construir.
+2. Los `.claude/memoria/1x-*.md` son transcripción fiel de ese PDF.
+3. Los `.claude/memoria/2x-teoria-*.md` son teoría de la cátedra, usada para completar lo que el enunciado deja implícito — si contradicen al enunciado, gana el enunciado (es una simplificación académica adrede).
+4. `CLAUDE.md` es un resumen orientativo; si contradice a los anteriores, ganan ellos.
 
 ---
 
-*Próximo tema: algoritmos de planificación de corto plazo (FIFO, Round Robin, HRRN).*
+*Este archivo es la versión humana del índice; su equivalente operativo (el que carga el asistente en cada sesión) es `.claude/memoria/00-indice.md`.*

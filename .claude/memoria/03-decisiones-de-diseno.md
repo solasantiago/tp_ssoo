@@ -16,7 +16,7 @@ Formato sugerido:
 
 - **Planificador:** fórmulas de estimación y prioridad de HRRN; si el tiempo en BLOCK cuenta para la espera de HRRN; cómo se implementa la interrupción de fin de quantum (hilo temporizador por Core, etc.); estructura de colas por estado; política si un Core se desconecta con un Job en EXEC (el enunciado solo dice que vuelve a READY).
 - **Core:** cómo obtiene el tamaño de página (no está en su config); formato del handshake; cómo se reporta el "motivo" al devolver el contexto.
-- **Placa:** estructura de la tabla de páginas (bits de presencia, uso, modificado, lock, marco, posición en Offload); qué hace CLOCK-M con víctimas no modificadas; cómo se representa el "espacio asignado" para que `FREE` sepa cuántas páginas liberar; asignación de direcciones lógicas (siempre al inicio de página).
+- **Placa:** estructura de la tabla de páginas (bits de presencia, uso, modificado, lock, marco, posición en Offload); cómo se representa el "espacio asignado" para que `FREE` sepa cuántas páginas liberar; asignación de direcciones lógicas (siempre al inicio de página). (La preferencia de CLOCK-M por víctimas no modificadas ya no es un punto abierto: la confirma la teoría de la cátedra en `22-teoria-memoria-virtual.md`.)
 - **Storage:** formato concreto del journal (texto); cómo se garantiza la idempotencia; si se usan `fflush`/`fsync` en el paso 2 y el nombre del parámetro de config que los desactiva; política de asignación de bloques (primer libre, etc.).
 - **Comunes:** protocolo de mensajes (códigos de operación, serialización), biblioteca compartida entre módulos, scripts de deployment.
 

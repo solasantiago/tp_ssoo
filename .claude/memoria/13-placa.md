@@ -38,8 +38,8 @@ Administra la memoria del sistema: en ella se almacenan las **instrucciones** de
 
 ### Reemplazo de páginas
 - Cuando hay que cargar una página y **no hay marcos libres**: se elige una **página víctima** entre **todas** las páginas del **conjunto residente** (páginas de un Job actualmente cargadas en la Placa) que **no estén lockeadas**, **sin importar a qué Job pertenezcan** (reemplazo global).
-- Algoritmo por config (`ALGORITMO_REEMPLAZO`): **LRU** o **Clock Modificado** (`CLOCK-M`).
-- *[derivado]* Reemplazar implica bajar la víctima al Offload (log "Bajada al Offload") y subir la nueva página desde el Offload al marco liberado (log "Subida a Memoria"). Con CLOCK-M, si la víctima no está modificada podría evitarse la escritura al Offload; el enunciado no lo aclara, decisión del grupo.
+- Algoritmo por config (`ALGORITMO_REEMPLAZO`): **LRU** o **Clock Modificado** (`CLOCK-M`). Definición completa de ambos algoritmos (incluida la regla exacta de las dos pasadas de CLOCK-M sobre los bits U/M) en `22-teoria-memoria-virtual.md`.
+- Reemplazar implica bajar la víctima al Offload (log "Bajada al Offload") y subir la nueva página desde el Offload al marco liberado (log "Subida a Memoria"). **Confirmado por la teoría de la cátedra:** CLOCK-M busca primero páginas `(U=0, M=0)` — no modificadas — precisamente para minimizar las escrituras al Offload; solo si no encuentra ninguna recurre a una `(U=0, M=1)`. El enunciado no lo explicita, pero no es una decisión libre del grupo: es la definición misma del algoritmo que pide `ALGORITMO_REEMPLAZO=CLOCK-M`.
 
 ## Operaciones
 
