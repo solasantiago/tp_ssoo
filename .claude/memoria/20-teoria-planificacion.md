@@ -2,14 +2,52 @@
 
 Fuente: `contenido_drive/Clase 1 y 2 - Planificación de Procesos e Hilos/Planificación.pptx` y `Procesos - Hilos.pptx` (diapositivas de la cátedra, no el enunciado del TP). Este archivo es **teoría de base**; la letra obligatoria del TP está en `11-planificador.md`. Cuando algo de acá no coincide con el enunciado, **gana el enunciado** (es una simplificación académica).
 
+## Qué es un planificador (definición, antes de ver los niveles)
+
+**Planificación de procesos** es el conjunto de políticas y mecanismos del SO que gobiernan **el orden en que se ejecutan los procesos**. Un **planificador de procesos** es, concretamente, un **módulo del SO que mueve los procesos entre las distintas colas de planificación** (NEW, READY, BLOCK, etc.) — es decir, decide las transiciones del diagrama de estados, no ejecuta él mismo las instrucciones del proceso.
+
+La razón de que existan **varios niveles de planificador** (y no uno solo) es que la ejecución de un proceso alterna entre dos tipos de actividad:
+
+- **Ráfaga de CPU** (CPU burst): tramo en el que el proceso usa la CPU activamente.
+- **Ráfaga de E/S** (I/O burst): tramo en el que el proceso espera una operación de entrada/salida y no necesita la CPU.
+
+Según cómo sea esa alternancia, un proceso se clasifica en:
+- **CPU-bound** (limitado por CPU): pasa más tiempo procesando que haciendo E/S — tiene ráfagas de CPU **largas**.
+- **I/O-bound** (limitado por E/S): pasa más tiempo haciendo E/S que usando la CPU — tiene ráfagas de CPU **cortas**.
+
+Cada nivel de planificador atiende una preocupación distinta sobre esta alternancia: cuántos procesos conviven (largo plazo), qué mezcla de CPU-bound/I/O-bound conviene tener activa a la vez (mediano plazo), y a cuál de los que ya están listos se le da la CPU en este instante (corto plazo). *[derivado]* En EntrenadOS, la alternancia CPU/E-S de un Job real se traduce en: ejecuta instrucciones (ráfaga de "CPU" en el Core) hasta que pide una syscall bloqueante, un Servicio o sufre un Page Fault (equivalente a una "ráfaga de E/S": el Job se bloquea esperando algo externo).
+
 ## Planificadores por plazo (visión completa de la materia)
 
 La cátedra distingue **4** niveles (el TP solo pide implementar 2: largo y corto plazo):
 
-- **Extra largo plazo**: lo hace el administrador del sistema (fuera de alcance del TP).
-- **Largo plazo**: controla el **grado de multiprogramación**. Transiciones: `NEW → READY` y `cualquier estado → EXIT`. Corresponde en EntrenadOS a `GRADO_MULTIPROGRAMACION` y al pasaje NEW→READY por FIFO.
-- **Mediano plazo**: controla la **suspensión** de procesos vía swapping (`READY/BLOCK ↔ SUSPENDIDO`). **No existe como tal en el TP** — la Placa no tiene estados "suspendido", pero el **Offload** cumple un rol análogo a nivel de páginas (no de Jobs completos): páginas que no están en la Placa "viven" en el Offload, igual que un proceso suspendido vive en la partición de swap.
-- **Corto plazo**: controla qué proceso en READY pasa a EXEC (`READY → EXEC` y viceversa). Es el que el TP pide como `ALGORITMO_PLANIFICACION`.
+### Planificador de largo plazo
+- **Qué decide:** si se agrega un nuevo proceso al conjunto de procesos activos del sistema — es decir, **qué Job entra** y **en qué momento** se le permite pasar de NEW a READY.
+- **Cuándo se ejecuta:** cuando se crea un proceso nuevo.
+- **Qué controla:** el **grado de multiprogramación** — cuántos procesos conviven "activos" en el sistema a la vez.
+  - **Alto** grado de multiprogramación → la CPU no queda ociosa, pero cada proceso recibe un porcentaje menor de CPU.
+  - **Bajo** grado de multiprogramación → la CPU puede quedar ociosa, pero se brinda un servicio más satisfactorio a los procesos que sí están LISTOS.
+  - Otras señales que puede mirar (más allá del criterio simple de "hay lugar o no"): que un proceso finalice (libera lugar → baja el grado de multiprogramación), monitorear tiempo de CPU ociosa, prioridad del Job que quiere entrar, y buscar una **buena mezcla de procesos CPU-bound / I/O-bound** para optimizar el uso de la CPU (si entran muchos I/O-bound, la CPU tiende a quedar más libre para los CPU-bound, y viceversa).
+- **En EntrenadOS:** corresponde a `GRADO_MULTIPROGRAMACION` y al pasaje NEW → READY por FIFO. La transición `NEW → READY` y `cualquier estado → EXIT` son las que gestiona este nivel. Como acá no hay ráfagas de E/S reales que perfilar de antemano (no se sabe si un Job es "CPU-bound" o "I/O-bound" antes de correrlo), el criterio de "buena mezcla" no aplica — el TP simplifica a FIFO puro limitado por el grado de multiprogramación.
+
+### Planificador de mediano plazo
+- **Qué decide:** si hace falta **suspender** un proceso (sacarlo de RAM y llevarlo a almacenamiento secundario) o volver a cargar en RAM un proceso previamente suspendido. Esta operación de intercambio se llama **swapping**: `SWAP OUT` (sale de RAM, disminuye el grado de multiprogramación efectivo) y `SWAP IN` (vuelve a RAM, lo aumenta).
+- **Para qué sirve:** igual que el largo plazo, busca una buena mezcla de procesos CPU-bound/I/O-bound activos, pero actuando sobre procesos que **ya estaban activos** (a diferencia del largo plazo, que decide sobre los que recién quieren entrar).
+- **Ejemplos de cuándo actúa** (de la propia diapositiva de la cátedra):
+  - Muchos procesos I/O-bound, todos bloqueados esperando E/S → la CPU queda ociosa (IDLE) → conviene suspender alguno de esos y cargar en su lugar procesos CPU-bound desde el swap.
+  - Muchos procesos CPU-bound compitiendo → mal uso de los dispositivos de E/S (nadie los usa) → conviene suspender alguno y cargar procesos I/O-bound desde el swap.
+  - Llega un proceso de mayor prioridad y no hay RAM libre → se suspende uno de menor prioridad para hacerle lugar.
+  - Un proceso suspendido está por desbloquearse (ya casi termina la espera que lo tenía afuera) y hay RAM libre → conviene cargarlo ya, para acelerar su vuelta a ejecución.
+- **En EntrenadOS:** **no existe como tal** — la Placa no tiene un estado "Job suspendido" (los Jobs son NEW/READY/EXEC/BLOCK/EXIT, nada más). El **Offload** cumple un rol *análogo* pero a nivel de **páginas individuales**, no de Jobs completos: una página que no está en la Placa "vive" en el Offload, igual que un proceso suspendido vive en la partición de swap real — pero decidir qué página bajar es el algoritmo de **reemplazo** (LRU/CLOCK-M) de la Placa, no un "planificador de mediano plazo" separado.
+
+### Planificador de corto plazo
+- **Qué decide:** de todos los procesos que ya están en RAM y **listos** para ejecutar (READY), a **cuál** se le asigna la CPU ahora.
+- **Frecuencia:** es el que se ejecuta **con más frecuencia que todos los demás** — por eso tiene dos requisitos en tensión: debe tomar buenas decisiones, pero su propio **overhead debe ser mínimo** (no puede ser costoso de correr, porque se corre todo el tiempo).
+- **Cuándo se invoca:** cada vez que ocurre un evento que **libera la CPU** o que da la oportunidad de elegir un proceso "más prioritario" — interrupciones, llamadas al sistema, señales (el detalle exacto de estos eventos está en la sección siguiente).
+- **En EntrenadOS:** es el que el TP pide implementar como `ALGORITMO_PLANIFICACION` (FIFO/RR/HRRN), decidiendo la transición `READY → EXEC`.
+
+### Planificador de extra largo plazo
+Lo hace el administrador del sistema (una persona, no un algoritmo del SO) — está fuera de alcance tanto de la teoría en detalle como del TP, se menciona solo para completar los 4 niveles.
 
 ## Eventos de replanificación (corto plazo)
 

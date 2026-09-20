@@ -23,8 +23,8 @@ El libro es un **PDF escaneado sin capa de texto**: hace falta `tesseract` (inst
 
 ## Modalidad de trabajo
 
-- **Estudio conceptual guiado, tema por tema**, siguiendo el orden del enunciado. El usuario explica el concepto con sus palabras y el asistente valida o corrige contra el enunciado y la teoría de la materia. Las notas en `Notas de estudio.md` citan frases textuales del usuario cuando resumen bien la idea.
-- Al **cerrar un tema**: se agrega la sección a `Notas de estudio.md` (mismo estilo: explicación + citas + "¿por qué?"), se actualiza `01-estado-actual.md` y se anota el "Próximo tema" al final de `Notas de estudio.md`.
+- **Estudio en dos pasos: primero leer, después ser evaluado.** Cuando se va a repasar un tema, el asistente **no** debe empezar preguntando "¿cómo lo entendés vos?". Primero tiene que indicarle al usuario **qué archivos/secciones concretas leer** del repo (`.claude/memoria/1x-*` y `2x-teoria-*`, o la fuente original si hace falta más profundidad) para que estudie por su cuenta. Recién cuando el usuario vuelve y dice que ya leyó, el asistente lo evalúa: le hace preguntas sobre el tema como si fuera una mesa de examen, corrige lo que esté mal y profundiza donde haga falta.
+- Al **cerrar un tema** (después de la evaluación): se agrega la sección a `Notas de estudio.md` (estilo: explicación + citas + "¿por qué?"), se actualiza `01-estado-actual.md` y se anota el "Próximo tema" al final de `Notas de estudio.md`.
 - Cuando el enunciado no define algo, no inventar: marcarlo como decisión del grupo, registrar la opción elegida y su justificación en `03-decisiones-de-diseno.md` (se defiende en el coloquio).
 - Cualquier propuesta de implementación debe ser **coherente con la teoría vista en clase**: contradecirla es motivo de desaprobación directa. Si una simplificación conveniente contradice la teoría, avisar.
 - Los **logs obligatorios** se transcriben literalmente desde `1x-*`; nunca reconstruirlos de memoria.
