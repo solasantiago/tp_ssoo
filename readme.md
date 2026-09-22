@@ -19,6 +19,7 @@ Este repositorio contiene el **contexto y las notas de estudio** para el trabajo
 - **¿Querés el panorama general del TP?** Leé `Notas de estudio.md` — está escrito en lenguaje llano, tema por tema, a medida que se van cerrando.
 - **¿Buscás una spec exacta** (formato de un log obligatorio, un campo de config, el layout de bytes del filesystem)? Andá directo a `.claude/memoria/1x-*.md` (uno por módulo: Planificador, Core, Placa, Storage) — son transcripción fiel del enunciado.
 - **¿Querés entender la teoría detrás de una decisión de diseño** (por qué CLOCK-M prefiere páginas no modificadas, de dónde sale la fórmula de HRRN, cómo funciona el journaling de un filesystem real)? Mirá `.claude/memoria/2x-teoria-*.md` — resume las diapositivas de la cátedra y extractos puntuales del libro, citados con página/diapositiva exacta.
+- **¿Te cruzaste con un término que no conocés** (PTBR, jacketing, inodo, etc.)? `.claude/memoria/26-glosario.md` tiene un glosario corto de cada término, en el orden en que aparece por primera vez en las diapositivas de cada clase.
 - **¿Vas a usar Claude Code para seguir trabajando en esto?** No hace falta que leas nada más: `CLAUDE.md` carga automáticamente el índice y el estado actual al iniciar sesión.
 
 ## Orden de lectura recomendado (para estudiar)
@@ -37,7 +38,7 @@ Este repositorio contiene el **contexto y las notas de estudio** para el trabajo
    (todos dentro de `.claude/memoria/`)
 3. **Cierre:** `15-entregas-y-checks.md` (qué se evalúa en cada check) y `03-decisiones-de-diseno.md` (a medida que el grupo resuelva los puntos que el enunciado deja abiertos).
 
-`24-teoria-deadlocks.md` queda al margen de este recorrido — no lo pide el enunciado de EntrenadOS, está documentado por completitud.
+`24-teoria-deadlocks.md` queda al margen de este recorrido — no lo pide el enunciado de EntrenadOS, está documentado por completitud. `26-glosario.md` no es para leer de corrido, es de consulta.
 
 ## Advertencia sobre las fuentes de `.claude/memoria/`
 

@@ -19,7 +19,7 @@ Los prefijos numéricos agrupan los archivos por familia, con huecos dejados a p
 | `04–09` | *(libre — reservado para una futura familia meta)* |
 | `10–15` | Letra del enunciado del TP: transcripción fiel del PDF, por módulo |
 | `16–19` | *(libre — reservado para más contenido del enunciado)* |
-| `20–25` | Teoría de la cátedra: diapositivas de clase + complementos del libro |
+| `20–29` | Teoría de la cátedra: diapositivas de clase + complementos del libro + glosario |
 
 Si se agrega un archivo nuevo, va al primer número libre de la familia que le corresponda (o abre una familia nueva en un rango libre) — no se renumeran los archivos existentes.
 
@@ -42,6 +42,7 @@ Si se agrega un archivo nuevo, va al primer número libre de la familia que le c
 | `23-teoria-filesystems.md` | Teoría de la cátedra: qué es un FS, estrategias de asignación de bloques, FAT en detalle, journaling en general | al estudiar o justificar algo del Storage |
 | `24-teoria-deadlocks.md` | Teoría de la cátedra: deadlocks y livelock. No lo pide el enunciado de EntrenadOS; documentado por completitud (parcial/coloquio) | solo si aparece deadlock en una consulta puntual |
 | `25-teoria-libro-complementos.md` | Complementos del libro de cátedra (Silberschatz), citados con página exacta: CLOCK-M completo (4 clases), otros algoritmos de reemplazo, FAT confirmado contra el libro, journaling vs. fsck | al necesitar más profundidad que la de las diapositivas en reemplazo de páginas o journaling |
+| `26-glosario.md` | Glosario de términos nuevos de la materia, en el orden de aparición de las diapositivas de cada clase (no alfabético) | cuando aparece un término desconocido; para repasar vocabulario antes de un parcial/coloquio |
 
 ## Orden de lectura recomendado (para estudiar)
 
@@ -61,6 +62,8 @@ Si el usuario quiere leer los `.md` de esta carpeta directamente (no solo que el
 3. **Cierre:** `15-entregas-y-checks.md` (qué se evalúa en cada check) y `03-decisiones-de-diseno.md` (a medida que el grupo resuelva los puntos abiertos).
 
 `24-teoria-deadlocks.md` queda al margen de este recorrido — no lo pide el enunciado de EntrenadOS.
+
+`26-glosario.md` no es para leer de corrido: es de consulta — un término nuevo que aparece en cualquier lectura probablemente ya esté ahí, en el orden en que se lo vio por primera vez en clase.
 
 **Advertencia sobre estas fuentes:** los `2x-teoria-*.md` son resúmenes del asistente (citados con página/diapositiva exacta), no las fuentes primarias, y tienen dos límites conocidos: (a) se extrajo solo texto de los `.pptx`, así que los diagramas e imágenes originales (diagramas de estados, gráficos de fallos de página, layouts de memoria, etc.) no están reproducidos — hay que abrir el `.pptx` en `contenido_drive/` para verlos; (b) del libro (`Libro - Fundamentos de Sistemas Operativos.pdf`) solo se hizo OCR selectivo de un puñado de secciones puntuales (ver `25-teoria-libro-complementos.md`), no de los capítulos completos. Para el parcial o el coloquio, donde hay que defender el tema, conviene complementar con una lectura directa de esas fuentes en los puntos que lo requieran — pedirle al asistente que extienda el OCR o el resumen de una sección puntual es válido en cualquier momento.
 
