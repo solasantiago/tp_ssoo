@@ -20,6 +20,7 @@ Los prefijos numéricos agrupan los archivos por familia, con huecos dejados a p
 | `10–15` | Letra del enunciado del TP: transcripción fiel del PDF, por módulo |
 | `16–19` | *(libre — reservado para más contenido del enunciado)* |
 | `20–29` | Teoría de la cátedra: diapositivas de clase + complementos del libro + glosario |
+| `30–39` | Evaluaciones de estudio (mesa de examen por tema) |
 
 Si se agrega un archivo nuevo, va al primer número libre de la familia que le corresponda (o abre una familia nueva en un rango libre) — no se renumeran los archivos existentes.
 
@@ -43,6 +44,7 @@ Si se agrega un archivo nuevo, va al primer número libre de la familia que le c
 | `24-teoria-deadlocks.md` | Teoría de la cátedra: deadlocks y livelock. No lo pide el enunciado de EntrenadOS; documentado por completitud (parcial/coloquio) | solo si aparece deadlock en una consulta puntual |
 | `25-teoria-libro-complementos.md` | Complementos del libro de cátedra (Silberschatz), citados con página exacta: CLOCK-M completo (4 clases), otros algoritmos de reemplazo, FAT confirmado contra el libro, journaling vs. fsck | al necesitar más profundidad que la de las diapositivas en reemplazo de páginas o journaling |
 | `26-glosario.md` | Glosario de términos nuevos de la materia, en el orden de aparición de las diapositivas de cada clase (no alfabético) | cuando aparece un término desconocido; para repasar vocabulario antes de un parcial/coloquio |
+| `30-evaluaciones.md` | Registro de las evaluaciones tipo mesa de examen: consigna, respuesta del usuario y corrección, por tema | al retomar una evaluación pendiente, o para repasar qué ya se evaluó antes de un parcial/coloquio |
 
 ## Orden de lectura recomendado (para estudiar)
 

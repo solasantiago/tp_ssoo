@@ -26,10 +26,11 @@ Estamos en la fase de **estudio conceptual del enunciado**, tema por tema, antes
 
 ## Próximo paso
 
-Repasar conceptualmente **FIFO, RR y HRRN** aplicados al Planificador, y cerrar el tema en `Notas de estudio.md`. Las fórmulas y la teoría de fondo ya están relevadas y confirmadas en `20-teoria-planificacion.md` (estimación exponencial de ráfaga, response ratio de HRRN, por qué RR es siempre con desalojo). Falta el repaso conversacional con el usuario para cerrarlo y decidir los puntos que el enunciado deja abiertos:
+**Evaluación en curso** de **FIFO, RR y HRRN** aplicados al Planificador — registro completo en `30-evaluaciones.md` (consigna, respuesta y corrección de cada pregunta). Al cerrarla, falta todavía volcar el tema a `Notas de estudio.md`. Estado de la evaluación: tanda 1 con 3/4 preguntas respondidas y corregidas; pendiente la pregunta 4 (Response Ratio de HRRN) y la tanda 2 completa (aplicación a EntrenadOS).
 
-- Qué configura cada parámetro: `RR_QUANTUM` (ms), `ESTIMACION_INICIAL` (ms) y `HRRN_ALFA`. Ya resuelto conceptualmente en `20-teoria-planificacion.md`.
-- Cómo interactúan con el modelo de 5 estados: qué pasa con la estimación/espera cuando un Job vuelve de BLOCK a READY (punto abierto, ver `03-decisiones-de-diseno.md`); el desalojo por quantum en RR (EXEC → READY vía interrupción al Core); el hecho de que las syscalls no bloqueantes (`INIT_JOB`, `ALLOC`, `FREE`) no liberan el Core.
+Puntos que quedarán por decidir al cerrar el tema:
+
+- Cómo interactúan con el modelo de 5 estados: qué cuenta como "W" (tiempo de espera) para un Job que vuelve de BLOCK a READY (punto abierto, ver `03-decisiones-de-diseno.md`); el hecho de que las syscalls no bloqueantes (`INIT_JOB`, `ALLOC`, `FREE`) no liberan el Core.
 - El log obligatorio "Estimación" (`## (<JID>) - Prioridad HRRN calculada: <PRIORIDAD> - Estimación próxima ráfaga: <ESTIMACION>`) fija qué valores hay que poder calcular.
 
 ## Calendario relevante
